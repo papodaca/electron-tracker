@@ -1,0 +1,29 @@
+{
+  "build": {
+    "appId": "electron.tracker",
+    "mac": {
+      "category": "your.app.category.type"
+    }
+  },
+  "name": "electron-tracker",
+  "private": true,
+  "version": "1.0.0",
+  "license": "ISC",
+  "scripts": {
+    "start": "nf start",
+    "vite-dev": "vite",
+    "vite-build": "vite build --outDir web",
+    "pretty": "standard *.js *.mjs src/**/*.js",
+    "build": "yarn vite-build && electron-builder build"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^2.4.6",
+    "electron": "^27.0.2",
+    "electron-builder": "^24.6.4",
+    "foreman": "^3.0.1",
+    "onchange": "^7.1.0",
+    "standard": "^17.1.0",
+    "svelte": "^4.2.0",
+    "vite": "^4.5.0"
+  }
+}
