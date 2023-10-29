@@ -3,22 +3,37 @@ const path = require('path')
 
 let mainWindow
 
-const createWindow = () => {
+const createConsoleWindow = () => {
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
     icon: path.resolve(app.getAppPath(), 'web/assets/icons/electron-tracker.png'),
     webPreferences: {
-      preload: path.resolve(app.getAppPath(), 'preload.js'),
+      preload: path.resolve(app.getAppPath(), 'console-preload.js'),
       nodeIntegration: true
     }
   })
-  mainWindow.loadFile(path.resolve(app.getAppPath(), 'web/index.html'))
+  mainWindow.loadFile(path.resolve(app.getAppPath(), 'web/console.html'))
+  mainWindow.webContents.openDevTools()
+}
+
+const createPresenterWindow = () => {
+  mainWindow = new BrowserWindow({
+    width: 800,
+    height: 600,
+    icon: path.resolve(app.getAppPath(), 'web/assets/icons/electron-tracker.png'),
+    webPreferences: {
+      preload: path.resolve(app.getAppPath(), 'presenter-preload.js'),
+      nodeIntegration: true
+    }
+  })
+  mainWindow.loadFile(path.resolve(app.getAppPath(), 'web/presenter.html'))
   mainWindow.webContents.openDevTools()
 }
 
 app.on('ready', () => {
-  createWindow()
+  createConsoleWindow()
+  createPresenterWindow()
 
   ipcMain.on('openFiles', () => {
     dialog.showOpenDialog({
@@ -38,6 +53,6 @@ app.on('window-all-closed', () => {
 
 app.on('activate', () => {
   if (mainWindow === null) {
-    createWindow()
+    createConsoleWindow()
   }
 })
