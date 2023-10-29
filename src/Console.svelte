@@ -1,5 +1,6 @@
 <script>
   import { onMount } from "svelte";
+  import PlayerList from "./components/PlayerList.svelte";
 
   const openPresenter = consoleAPI.openPresenter
   let state = {}
@@ -15,7 +16,7 @@
     <button on:click={openPresenter}>
       Open Presenter
     </button>
-    <pre>{JSON.stringify(state)}</pre>
+    <PlayerList players={state.players} initiative={false} />
   </div>
 </main>
 
