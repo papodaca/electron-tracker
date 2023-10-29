@@ -8,7 +8,7 @@
   "name": "electron-tracker",
   "private": true,
   "version": "1.0.0",
-  "license": "ISC",
+  "license": "MIT",
   "scripts": {
     "start": "nf start",
     "vite-dev": "vite",
