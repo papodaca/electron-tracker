@@ -1,19 +1,11 @@
 <script>
+  import { onMount } from "svelte";
+
   const openPresenter = consoleAPI.openPresenter
-  const brodcastState = () => {
-    consoleAPI.broadcastState({
-      players: [{
-        name: 'Player 1',
-        initiative: 1,
-      },{
-        name: 'Player 2',
-        initiative: 2,
-      }, {
-        name: 'Player 3',
-        initiative: 3,
-      }]
-    })
-  }
+  let state = {}
+  onMount(() => {
+    consoleAPI.getState().then((s) => state = s)
+  })
 </script>
 
 <main>
@@ -23,9 +15,7 @@
     <button on:click={openPresenter}>
       Open Presenter
     </button>
-    <button on:click={brodcastState}>
-      Set State
-    </button>
+    <pre>{JSON.stringify(state)}</pre>
   </div>
 </main>
 

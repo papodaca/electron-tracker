@@ -10,8 +10,8 @@ export default defineConfig({
         console: 'console.html',
         presenter: 'presenter.html'
       },
-      external: ['electron'],
-    },
+      external: ['electron']
+    }
   },
   plugins: [svelte()]
 })

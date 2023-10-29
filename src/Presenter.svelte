@@ -1,17 +1,16 @@
 <script>
   import { onMount } from "svelte";
-  let thisState = {};
+  let state = {};
   onMount(() => {
     document.body.setAttribute("style", "background-image: url('/home/usr1/Projects/electron-tracker/public/assets/carsland.jpg')")
+    presenterAPI.getState().then((s) => state = s)
   })
-  presenterAPI.subscribeToStateChange((state) => {
-    thisState = state
-  })
+  presenterAPI.subscribeToStateChange((s) => state = s)
 </script>
 
-{#if thisState.players}
+{#if state.players}
 <div class="list-group initiative-list">
-  {#each thisState.players as player}
+  {#each state.players as player}
   <div class="list-group-item list-group-item-action {player['active'] ? 'active' : ''}">
     <div class="text"><span class="initiative">{player['initiative']}</span> - <span class="name">{player['name']}</span></div>
   </div>
