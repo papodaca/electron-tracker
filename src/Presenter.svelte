@@ -1,14 +1,45 @@
 <script>
-  import Counter from './lib/Counter.svelte'
+  import { onMount } from "svelte";
+  let thisState = {};
+  onMount(() => {
+    document.body.setAttribute("style", "background-image: url('/home/usr1/Projects/electron-tracker/public/assets/carsland.jpg')")
+  })
+  presenterAPI.subscribeToStateChange((state) => {
+    thisState = state
+  })
 </script>
 
-<main>
-  <h1>Vite + Svelte</h1>
-
-  <div class="card">
-    <Counter />
+{#if thisState.players}
+<div class="list-group initiative-list">
+  {#each thisState.players as player}
+  <div class="list-group-item list-group-item-action {player['active'] ? 'active' : ''}">
+    <div class="text"><span class="initiative">{player['initiative']}</span> - <span class="name">{player['name']}</span></div>
   </div>
-</main>
+  {/each}
+</div>
+{/if}
 
 <style>
+.list-group .list-group-item {
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+.list-group .list-group-item div.text {
+  opacity: 0.9;
+  background-color: var(--bs-body-bg);
+}
+.list-group .list-group-item.active div.text {
+  opacity: 0.9;
+  background-color: var(--bs-active-bg);
+}
+
+.list-group .list-group-item div.text .initiative {
+  width: 1.5em;
+  display: inline-block;
+}
+.list-group .list-group-item div.text .name {
+  margin-left: 0.5em;
+  margin-right: 0.5em;
+}
 </style>

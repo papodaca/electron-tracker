@@ -1,4 +1,5 @@
-import './app.css'
+import 'bootstrap/dist/css/bootstrap.css'
+import './presenter.css'
 import Presenter from './Presenter.svelte'
 
 const presenter = new Presenter({

@@ -1,5 +1,5 @@
 const { contextBridge, ipcRenderer } = require('electron')
 
-contextBridge.exposeInMainWorld('electronAPI', {
-  openFiles: () => ipcRenderer.send('openFiles')
+contextBridge.exposeInMainWorld('presenterAPI', {
+  subscribeToStateChange: (callback) => ipcRenderer.on('presenter:state', (_e,s) => callback(s))
 })

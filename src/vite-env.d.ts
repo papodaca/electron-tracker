@@ -1,8 +1,14 @@
 /// <reference types="svelte" />
 /// <reference types="vite/client" />
 
-interface IPC {
-  openFiles: () => void,
-  read
+interface ConsoleIPC {
+  openPresenter: () => void
+  broadcastState: (state: any) => void
 }
-declare const electronAPI: IPC
+declare const consoleAPI: ConsoleIPC
+
+type StateSubscriber = (state: any) => void
+interface presenterIPC {
+  subscribeToStateChange: (StateSubscriber) => void
+}
+declare const presenterAPI: presenterIPC

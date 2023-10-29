@@ -1,4 +1,5 @@
-import './app.css'
+import 'bootstrap/dist/css/bootstrap.css'
+import './console.css'
 import Console from './Console.svelte'
 
 const console = new Console({

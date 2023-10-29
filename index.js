@@ -1,39 +1,38 @@
 const { app, BrowserWindow, ipcMain, dialog } = require('electron')
 const path = require('path')
 
-let mainWindow
+let consoleWindow, presenterWindow
 
-const createConsoleWindow = () => {
-  mainWindow = new BrowserWindow({
+const createWindow = (name) => {
+  let thisWindow = new BrowserWindow({
     width: 800,
     height: 600,
     icon: path.resolve(app.getAppPath(), 'web/assets/icons/electron-tracker.png'),
     webPreferences: {
-      preload: path.resolve(app.getAppPath(), 'console-preload.js'),
+      preload: path.resolve(app.getAppPath(), `${name}-preload.js`),
       nodeIntegration: true
     }
   })
-  mainWindow.loadFile(path.resolve(app.getAppPath(), 'web/console.html'))
-  mainWindow.webContents.openDevTools()
+  thisWindow.menuBarVisible = false
+  return thisWindow
+}
+
+const createConsoleWindow = () => {
+  consoleWindow = createWindow('console')
+  consoleWindow.loadFile(path.resolve(app.getAppPath(), 'web/console.html'))
+  consoleWindow.webContents.openDevTools()
 }
 
 const createPresenterWindow = () => {
-  mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
-    icon: path.resolve(app.getAppPath(), 'web/assets/icons/electron-tracker.png'),
-    webPreferences: {
-      preload: path.resolve(app.getAppPath(), 'presenter-preload.js'),
-      nodeIntegration: true
-    }
-  })
-  mainWindow.loadFile(path.resolve(app.getAppPath(), 'web/presenter.html'))
-  mainWindow.webContents.openDevTools()
+  if(presenterWindow) return
+  presenterWindow = createWindow('presenter')
+  presenterWindow.loadFile(path.resolve(app.getAppPath(), 'web/presenter.html'))
+  presenterWindow.webContents.openDevTools()
 }
 
 app.on('ready', () => {
   createConsoleWindow()
-  createPresenterWindow()
+  // createPresenterWindow()
 
   ipcMain.on('openFiles', () => {
     dialog.showOpenDialog({
@@ -42,6 +41,11 @@ app.on('ready', () => {
       if (files.canceled) return
       console.log(files)
     })
+  })
+
+  ipcMain.on('openPresenter', createPresenterWindow)
+  ipcMain.on('setState', (_event, state) => {
+    presenterWindow.webContents.send('presenter:state', state)
   })
 })
 
@@ -52,7 +56,7 @@ app.on('window-all-closed', () => {
 })
 
 app.on('activate', () => {
-  if (mainWindow === null) {
+  if (consoleWindow === null) {
     createConsoleWindow()
   }
 })
