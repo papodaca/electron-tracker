@@ -172,6 +172,9 @@
     max-width: 150px;
     display: inline-block;
   }
+  button.btn {
+    margin-bottom: 5px;
+  }
 </style>
 Campaign:&nbsp;
 <select class="form-control" bind:value={state.currentCampaign} on:change={broadcastState}>
