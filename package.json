@@ -2,14 +2,15 @@
   "build": {
     "appId": "im.iyg.electron.tracker",
     "mac": {
-      "target": "zip",
+      "target": ["zip", "dmg"],
       "category": "apps.games"
     },
     "win": {
-      "target": "zip"
+      "target": ["zip", "nsis"],
+      "icon": "public/assets/icons/favicon.ico"
     },
     "linux": {
-      "target": "tar.gz"
+      "target": ["tar.gz", "deb", "AppImage", "flatpak"]
     }
   },
   "name": "electron-tracker",
