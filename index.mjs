@@ -61,6 +61,11 @@ const broadcastFiles = (files, all) => {
 app.on('ready', () => {
   createConsoleWindow()
   settings.get('state').then((s) => {
+    if (s == null) {
+      s = {
+        campaigns: ["default"]
+      }
+    }
     state = s
     broadcastState(null, s, true)
   })
