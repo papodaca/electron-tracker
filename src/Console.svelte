@@ -1,41 +1,60 @@
 <script>
   import { onMount } from "svelte";
   import PlayerList from "./components/PlayerList.svelte";
+  import { toTitleCase } from "./utils"
 
   const openPresenter = consoleAPI.openPresenter
-  let state = {}, sortable = false
+  let state = {}, sortable = false, newCampaignName
 
   const loadState = async () => {
     state = await consoleAPI.getState()
+    let changed = false
+    if (state.currentCampaign == null) {
+      state.currentCampaign = "default"
+      state.campaigns = [state.currentCampaign]
+      changed = true
+    }
+    if (state[state.currentCampaign] == null) {
+      state[state.currentCampaign] = defaultCampaing()
+      changed = true
+    }
+    if (changed) broadcastState()
   }
+  const defaultCampaing = () => ({
+    players: [
+      {
+        id: crypto.randomUUID(),
+        name: "Player 1",
+        initiative: 3
+      },{
+        id: crypto.randomUUID(),
+        name: "Player 2",
+        initiative: 2
+      },{
+        id: crypto.randomUUID(),
+        name: "Player 3",
+        initiative: 1
+      }
+    ]
+  })
   onMount(() => loadState())
   const setSate = () => {
     state = {
-      players: [
-        {
-          id: crypto.randomUUID(),
-          name: "Player 1",
-          initiative: 1
-        },{
-          id: crypto.randomUUID(),
-          name: "Player 2",
-          initiative: 2
-        },{
-          id: crypto.randomUUID(),
-          name: "Player 3",
-          initiative: 3
-        }
-      ]
+      ...state,
+      [state.currentCampaign]: defaultCampaing()
     }
-    consoleAPI.broadcastState(state)
+    broadcastState()
   }
   const playersChange = (e) => {
     state = {
       ...state,
-      players: e.detail
+      [state.currentCampaign]: {
+        ...state[state.currentCampaign],
+        players: e.detail 
+      }
     }
     sortList(null)
-    consoleAPI.broadcastState(state)
+    broadcastState()
   }
   const toggleSortable = (_e) => {
     sortable = !sortable
@@ -43,58 +62,71 @@
   const sortList = (_e) => {
     state = {
       ...state,
-      players: state.players.sort((a, b) => Number(b.initiative) - Number(a.initiative))
+      [state.currentCampaign]: {
+        ...state[state.currentCampaign],
+        players: state[state.currentCampaign].players.sort((a, b) => Number(b.initiative) - Number(a.initiative)) 
+      }
     }
-    consoleAPI.broadcastState(state)
+    broadcastState()
   }
 
-  const toTitleCase = (str) => {
-  return str.replace(
-    /\w\S*/g,
-    function(txt) {
-      return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+  const addCampaign = (_el) => {
+    state = {
+      ...state,
+      currentCampaign: newCampaignName,
+      campaigns: [...state.campaigns, newCampaignName],
+      [newCampaignName]: defaultCampaing()
     }
-  );
-}
-
+    newCampaignName = undefined
+    broadcastState()
+  }
   const addPlayer = (kind) =>((_e) => {
     state = {
       ...state,
-      players: [
-        ...state.players,
-        {
-          id: crypto.randomUUID(),
-          name: `New ${toTitleCase(kind)}`,
-          initiative: 0,
-          kind
-        }
-      ]
+      [state.currentCampaign]: {
+        ...state[state.currentCampaign],
+        players: [
+          ...state[state.currentCampaign].players,
+          {
+            id: crypto.randomUUID(),
+            name: `New ${toTitleCase(kind)}`,
+            initiative: 0,
+            kind
+          }
+        ]
+      }
     }
   })
   const clearMonsters = (_e) => {
     state = {
       ...state,
-      players: state.players.filter(p => p.kind !== 'monster')
+      [state.currentCampaign]: {
+        ...state[state.currentCampaign],
+        players: state[state.currentCampaign].players.filter(p => p.kind !== 'monster')
+      }
     }
-    consoleAPI.broadcastState(state)
+    broadcastState()
   }
   const updatePlayerActive = () => {
     state = {
       ...state,
-      players: state.players.map((p, i) => {
-        if (i === state.currentPlayer) {
-          p.active = true
-        } else {
-          p.active = false
-        }
-        return p
-      })
+      [state.currentCampaign]: {
+        ...state[state.currentCampaign],
+        players: state[state.currentCampaign].players.map((p, i) => {
+          if (i === state.currentPlayer) {
+            p.active = true
+          } else {
+            p.active = false
+          }
+          return p
+        })
+      }
     }
   }
   const startInitiative = (_e) => {
     state.currentPlayer = 0
     updatePlayerActive()
-    consoleAPI.broadcastState(state)
+    broadcastState()
   }
   const nextPlayer = (_e) => {
     state.currentPlayer += 1
@@ -102,7 +134,7 @@
       state.currentPlayer = 0
     }
     updatePlayerActive()
-    consoleAPI.broadcastState(state)
+    broadcastState()
     
   }
   const previousPlayer = (_e) => {
@@ -111,12 +143,12 @@
       state.currentPlayer = state.players.length - 1
     }
     updatePlayerActive()
-    consoleAPI.broadcastState(state)
+    broadcastState()
   }
   const endInitiative = (_e) => {
     state.currentPlayer = null
     updatePlayerActive()
-    consoleAPI.broadcastState(state)
+    broadcastState()
   }
 
   const toggleVisibility = (_e) => {
@@ -124,15 +156,34 @@
       ...state,
       initiativeVisible: !state.initiativeVisible
     }
-    consoleAPI.broadcastState(state)
+    broadcastState()
   }
+  const broadcastState = () => consoleAPI.broadcastState(state)
 </script>
 <style>
   .display {
     max-width: fit-content;
   }
+  select.form-control {
+    max-width: fit-content;
+    display: inline-block;
+  }
+  input.form-control {
+    max-width: 150px;
+    display: inline-block;
+  }
 </style>
-
+Campaign:&nbsp;
+<select class="form-control" bind:value={state.currentCampaign} on:change={broadcastState}>
+  {#each state.campaigns || [] as campaign}
+    <option value={campaign}>{toTitleCase(campaign)}</option>
+  {/each}
+</select>
+<input placeholder="Name" type="text" class="form-control" bind:value={newCampaignName} disabled={state.currentCampaign == null || state.currentCampaign.length < 1}/>
+<button class="btn btn-success" on:click={addCampaign}>
+  <i class="fa-regular fa-square-plus"></i>&nbsp;Add Campaign
+</button>
+<br/>
 <button class="btn btn-primary" on:click={openPresenter}>
   <i class="fa-solid fa-arrow-up-right-from-square"></i>&nbsp;Open Presenter
 </button>
@@ -178,5 +229,5 @@
   <i class="fa-solid fa-hand"></i>&nbsp;End
 </button>
 <div class="display">
-  <PlayerList players={state.players} on:update={playersChange} sortable={sortable} initiative={false} />
+  <PlayerList players={state[state.currentCampaign] && state[state.currentCampaign].players} on:update={playersChange} sortable={sortable} initiative={false} />
 </div>

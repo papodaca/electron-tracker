@@ -14,6 +14,6 @@
   presenterAPI.subscribeToStateChange(incomingState)
 </script>
 
-{#if state.players && state.initiativeVisible}
-  <PlayerList players={state.players} initiative={true} />
+{#if state[state.currentCampaign] && state[state.currentCampaign].players && state.initiativeVisible}
+  <PlayerList players={state[state.currentCampaign].players} initiative={true} />
 {/if}

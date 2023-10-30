@@ -10,6 +10,7 @@ let consoleWindow, presenterWindow, state
 const saveState = (s) => {
   state = s
   settings.set('state', s)
+  console.log('saveState', s)
 }
 
 const createWindow = (name) => {
