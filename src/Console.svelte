@@ -2,6 +2,7 @@
   import { onMount } from "svelte";
   import PlayerList from "./components/PlayerList.svelte";
   import { toTitleCase } from "./utils"
+  import ImageList from "./components/ImageList.svelte";
 
   const openPresenter = consoleAPI.openPresenter
   let state = {}, sortable = false, newCampaignName
@@ -18,6 +19,7 @@
       state[state.currentCampaign] = defaultCampaing()
       changed = true
     }
+    console.log("images", state[state.currentCampaign].images)
     if (changed) broadcastState()
   }
   const defaultCampaing = () => ({
@@ -35,7 +37,8 @@
         name: "Player 3",
         initiative: 1
       }
-    ]
+    ],
+    images: []
   })
   onMount(() => loadState())
   const setSate = () => {
@@ -159,6 +162,16 @@
     broadcastState()
   }
   const broadcastState = () => consoleAPI.broadcastState(state)
+  const imagesChange = (e) => {
+    state = {
+      ...state,
+      [state.currentCampaign]: {
+        ...state[state.currentCampaign],
+        images: e.detail
+      }
+    }
+    broadcastState()
+  }
 </script>
 <style>
   .display {
@@ -234,3 +247,4 @@ Campaign:&nbsp;
 <div class="display">
   <PlayerList players={state[state.currentCampaign] && state[state.currentCampaign].players} on:update={playersChange} sortable={sortable} initiative={false} />
 </div>
+<ImageList images={state[state.currentCampaign] && state[state.currentCampaign].images} on:update={imagesChange} />

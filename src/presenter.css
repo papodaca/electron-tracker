@@ -5,6 +5,9 @@ body {
   background-repeat: no-repeat;
   /* background-position: center; */
 }
+body.presenter {
+  transition: all 0.5s ease-in;
+}
 #app {
   max-width: fit-content;
   margin: 5px;

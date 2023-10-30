@@ -67,15 +67,7 @@ app.on('ready', () => {
   })
 })
 
-ipcMain.on('openFiles', () => {
-  dialog.showOpenDialog({
-    properties: ['openFile', 'multiSelections ']
-  }).then((files) => {
-    if (files.canceled) return
-    broadcastFiles(files)
-  })
-})
-
+ipcMain.handle('openFiles', () => dialog.showOpenDialog({properties: ['openFile', 'multiSelections']}))
 ipcMain.on('openPresenter', createPresenterWindow)
 ipcMain.on('setState', broadcastState)
 ipcMain.handle('getState', () => state)

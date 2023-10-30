@@ -113,7 +113,7 @@
 </style>
 
 <div class="list-group {initiative ? 'initiative-list' : ''}" >
-  {#each players as player, index (player.id)}
+  {#each players || [] as player, index (player.id)}
     <div
       draggable={!initiative && sortable}
       role="note"

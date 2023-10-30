@@ -5,8 +5,8 @@
 
   const incomingState = (s) => {
     state = s
-    state.currentImage = "/home/usr1/Projects/electron-tracker/public/assets/carsland.jpg"
-    document.body.setAttribute("style", `background-image: url('${state.currentImage}')`)
+    state.currentImage = state[state.currentCampaign].images.find(i => i.active)
+    document.body.setAttribute("style", `background-image: url('${state.currentImage.url}')`)
   }
   onMount(() => {
     presenterAPI.getState().then(incomingState)
