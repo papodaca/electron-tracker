@@ -15,10 +15,12 @@
     "start": "nf start",
     "vite-dev": "vite",
     "vite-build": "vite build --outDir web",
-    "pretty": "standard *.js *.mjs src/**/*.js",
+    "pretty": "standard *.cjs *.mjs src/**/*.js",
     "build": "yarn vite-build && electron-builder build"
   },
   "devDependencies": {
+    "@fortawesome/fontawesome-free": "^6.4.2",
+    "@popperjs/core": "^2.11.8",
     "@sveltejs/vite-plugin-svelte": "^2.4.6",
     "bootstrap": "^5.3.2",
     "electron": "^27.0.2",

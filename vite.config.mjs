@@ -5,6 +5,7 @@ import { svelte } from '@sveltejs/vite-plugin-svelte'
 export default defineConfig({
   base: '',
   build: {
+    sourcemap: true,
     rollupOptions: {
       input: {
         console: 'console.html',

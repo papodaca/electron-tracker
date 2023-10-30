@@ -1,7 +1,7 @@
 import path from 'path'
 
 import electron from 'electron'
-import settings from 'electron-settings';
+import settings from 'electron-settings'
 
 const { app, BrowserWindow, ipcMain, dialog } = electron
 
@@ -14,7 +14,7 @@ const saveState = (s) => {
 
 const createWindow = (name) => {
   const thisWindow = new BrowserWindow({
-    width: 800,
+    width: name === 'console' ? 540 : 800,
     height: 600,
     icon: path.resolve(app.getAppPath(), 'web/assets/icons/electron-tracker.png'),
     webPreferences: {
@@ -37,16 +37,19 @@ const createPresenterWindow = () => {
   presenterWindow = createWindow('presenter')
   presenterWindow.loadFile(path.resolve(app.getAppPath(), 'web/presenter.html'))
   presenterWindow.webContents.openDevTools()
-  presenterWindow.on('close', () => presenterWindow = null)
+  presenterWindow.on('close', () => {
+    presenterWindow = null
+  })
 }
 
 const broadcastState = (_event, s, all) => {
-  if (typeof all !== 'undefined') {
+  if (typeof all === 'undefined') all = false
+  if (all) {
     consoleWindow.webContents.send('console:state', s)
   } else {
-    saveState(s);
+    saveState(s)
   }
-  if(presenterWindow) {
+  if (presenterWindow) {
     presenterWindow.webContents.send('presenter:state', s)
   }
 }

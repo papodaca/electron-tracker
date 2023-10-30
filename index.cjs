@@ -1,2 +1,2 @@
-require = require("esm")(module/* , options */)
-module.exports = require("./index.mjs")
+require = require('esm')(module/* , options */)
+module.exports = require('./index.mjs')
