@@ -195,8 +195,8 @@ Campaign:&nbsp;
     <option value={campaign}>{toTitleCase(campaign)}</option>
   {/each}
 </select>
-<input placeholder="Name" type="text" class="form-control" bind:value={newCampaignName} disabled={state.currentCampaign == null || state.currentCampaign.length < 1}/>
-<button class="btn btn-success" on:click={addCampaign}>
+<input placeholder="Name" type="text" class="form-control" bind:value={newCampaignName}/>
+<button class="btn btn-success" on:click={addCampaign} disabled={newCampaignName == null || newCampaignName.length < 1}>
   <i class="fa-regular fa-square-plus"></i>&nbsp;Add Campaign
 </button>
 <br/>

@@ -1,12 +1,20 @@
 {
   "build": {
-    "appId": "electron.tracker",
+    "appId": "im.iyg.electron.tracker",
     "mac": {
-      "category": "your.app.category.type"
+      "target": "zip",
+      "category": "apps.games"
+    },
+    "win": {
+      "target": "zip"
+    },
+    "linux": {
+      "target": "tar.gz"
     }
   },
   "name": "electron-tracker",
   "module": "index.mjs",
+  "main": "index.cjs",
   "type": "module",
   "private": true,
   "version": "1.0.0",

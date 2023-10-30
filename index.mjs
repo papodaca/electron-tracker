@@ -30,14 +30,13 @@ const createWindow = (name) => {
 const createConsoleWindow = () => {
   consoleWindow = createWindow('console')
   consoleWindow.loadFile(path.resolve(app.getAppPath(), 'web/console.html'))
-  consoleWindow.webContents.openDevTools()
+  consoleWindow.on('close', app.exit)
 }
 
 const createPresenterWindow = () => {
   if (presenterWindow) return
   presenterWindow = createWindow('presenter')
   presenterWindow.loadFile(path.resolve(app.getAppPath(), 'web/presenter.html'))
-  presenterWindow.webContents.openDevTools()
   presenterWindow.on('close', () => {
     presenterWindow = null
   })
