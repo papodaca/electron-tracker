@@ -2,6 +2,11 @@
 
 Track initiative for your campaigns on a secondary monitor.
 
+* Track initiative of players, monsters and NPCs
+* Display images to set the scene of the locations your players explore.
+* Persist state of the game.
+* Quickly switch between multiple campaigns easily.
+
 ![App Screenshot](.github/screenshot.png)
 
 
