@@ -72,7 +72,7 @@
 
   // PROPS
   export let players = []
-  export let initiative = true, sortable = false, healthVisible = false
+  export let initiative = true, sortable = false, healthVisible = false, enemyHealthVisible = false
 </script>
 
 <style>
@@ -134,12 +134,14 @@
           <i class="fa-solid fa-grip-vertical"></i>&nbsp;
         {/if}
         <span class="initiative"><InPlaceEdit bind:value={player.initiative} on:submit={updateField(player.id, 'initiative')} editable={!initiative && !sortable} /></span>
-        {#if healthVisible }
+        {#if (healthVisible && enemyHealthVisible) || (healthVisible && (player.kind == 'player' || player.kind == 'npc' )) }
         <span class="health">
           HP:&nbsp;<InPlaceEdit bind:value={player.health} on:submit={updateField(player.id, 'health')} editable={!initiative && !sortable} />
           &nbsp;/&nbsp;
           <InPlaceEdit bind:value={player.maxHealth} on:submit={updateField(player.id, 'maxHealth')} editable={!initiative && !sortable} />
         </span>
+        {:else if healthVisible && !enemyHealthVisible && player.kind == 'monster' }
+          HP: ({player.maxHealth - player.health === 0 ? '' : '-'}{player.maxHealth - player.health})
         {/if}
         &nbsp;-&nbsp;
         {#if player.kind === 'player'}

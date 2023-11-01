@@ -64,20 +64,12 @@
   })
   onMount(() => loadState())
   const setSate = () => {
-    state = {
-      ...state,
-      [state.currentCampaign]: defaultCampaing()
-    }
-    broadcastState()
+    updateCampaign(defaultCampaing())
   }
   const playersChange = (e) => {
-    state = {
-      ...state,
-      [state.currentCampaign]: {
-        ...state[state.currentCampaign],
-        players: e.detail 
-      }
-    }
+    updateCampaign({
+      players: e.detail 
+    }, false)
     sortList()
     broadcastState()
   }
@@ -85,61 +77,41 @@
     sortable = !sortable
   }
   const sortList = () => {
-    state = {
-      ...state,
-      [state.currentCampaign]: {
-        ...state[state.currentCampaign],
-        players: state[state.currentCampaign].players.sort((a, b) => Number(b.initiative) - Number(a.initiative)) 
-      }
-    }
-    broadcastState()
+    updateCampaign({
+      players: state[state.currentCampaign].players.sort((a, b) => Number(b.initiative) - Number(a.initiative)) 
+    })
   }
 
   const addCampaign = (_el) => {
-    state = {
-      ...state,
-      currentCampaign: newCampaignName,
+    updateCampaign({
       campaigns: [...state.campaigns, newCampaignName],
       [newCampaignName]: defaultCampaing()
-    }
+    })
     newCampaignName = undefined
-    broadcastState()
   }
   const addPlayer = (kind) =>((_e) => {
-    state = {
-      ...state,
-      [state.currentCampaign]: {
-        ...state[state.currentCampaign],
-        players: [
-          ...state[state.currentCampaign].players,
-          {
-            id: crypto.randomUUID(),
-            name: `New ${toTitleCase(kind)}`,
-            initiative: 0,
-            health: DEFAULT_HEALTH,
-            maxHealth: DEFAULT_HEALTH,
-            kind
-          }
-        ]
-      }
-    }
+    updateCampaign({
+      players: [
+        ...state[state.currentCampaign].players,
+        {
+          id: crypto.randomUUID(),
+          name: `New ${toTitleCase(kind)}`,
+          initiative: 0,
+          health: DEFAULT_HEALTH,
+          maxHealth: DEFAULT_HEALTH,
+          kind
+        }
+      ]
+    }, false)
   })
   const clearMonsters = (_e) => {
-    state = {
-      ...state,
-      [state.currentCampaign]: {
-        ...state[state.currentCampaign],
-        players: state[state.currentCampaign].players.filter(p => p.kind !== 'monster')
-      }
-    }
-    broadcastState()
+    updateCampaign({
+      players: state[state.currentCampaign].players.filter(p => p.kind !== 'monster')
+    })
   }
   const updatePlayerActive = () => {
-    state = {
-      ...state,
-      [state.currentCampaign]: {
-        ...state[state.currentCampaign],
-        players: state[state.currentCampaign].players.map((p, i) => {
+    updateCampaign({
+      players: state[state.currentCampaign].players.map((p, i) => {
           if (i === state[state.currentCampaign].currentPlayer) {
             p.active = true
           } else {
@@ -147,8 +119,7 @@
           }
           return p
         })
-      }
-    }
+    })
   }
   const startInitiative = (_e) => {
     state[state.currentCampaign].currentPlayer = 0
@@ -178,50 +149,37 @@
     broadcastState()
   }
 
-  const toggleVisibility = (_e) => {
+  const updateCampaign = (data, update = true) => {
     state = {
       ...state,
       [state.currentCampaign]: {
         ...state[state.currentCampaign],
-        initiativeVisible: !state[state.currentCampaign].initiativeVisible
+        ...data
       }
     }
-    broadcastState()
+    if (update) broadcastState()
   }
-  const toggleHealthVisibility = (_e) => {
-    state = {
-      ...state,
-      [state.currentCampaign]: {
-        ...state[state.currentCampaign],
-        healthVisible: !state[state.currentCampaign].healthVisible
-      }
-    }
+
+  const toggle = (field) => ((_e) => {
+    updateCampaign({
+      [field]: !state[state.currentCampaign][field]
+    })
     broadcastState()
-  }
+  })
   const broadcastState = () => consoleAPI.broadcastState(state)
   const imagesChange = (e) => {
-    state = {
-      ...state,
-      [state.currentCampaign]: {
-        ...state[state.currentCampaign],
-        images: e.detail
-      }
-    }
-    broadcastState()
+    updateCampaign({
+      images: e.detail
+    })
   }
   const initiateRest = (kind) => (() => {
     if (kind === 'long') {
-      state = {
-      ...state,
-      [state.currentCampaign]: {
-        ...state[state.currentCampaign],
+      updateCampaign({
         players: state[state.currentCampaign].players.map(p => {
           if (p.kind === 'player' || p.kind === 'npc') p.health = p.maxHealth
           return p
         })
-      }
-    }
-    broadcastState()
+      })
     }
   })
 </script>
@@ -265,7 +223,7 @@ Campaign:&nbsp;
     <i class="fa-solid fa-arrow-down-wide-short"></i>&nbsp;Make Sortable
   {/if}
 </button>
-<button class="btn btn-primary" on:click={toggleVisibility}>
+<button class="btn btn-primary" on:click={toggle('initiativeVisible')}>
   {#if state[state.currentCampaign] && state[state.currentCampaign].initiativeVisible}
     <i class="fa-solid fa-eye-slash"></i>&nbsp;Hide
   {:else}
@@ -284,13 +242,6 @@ Campaign:&nbsp;
 <button class="btn btn-danger" on:click={clearMonsters}>
   <i class="fa-solid fa-square-xmark"></i>&nbsp;Clear Monsters
 </button><br/>
-<button class="btn btn-primary" on:click={toggleHealthVisibility}>
-  {#if state[state.currentCampaign] && state[state.currentCampaign].healthVisible}
-    <i class="fa-solid fa-eye-slash"></i>
-  {:else}
-    <i class="fa-solid fa-eye"></i>
-  {/if}&nbsp;Health
-</button>
 <button class="btn btn-primary" on:click={startInitiative}>
   <i class="fa-solid fa-play"></i>&nbsp;Start
 </button>
@@ -303,11 +254,33 @@ Campaign:&nbsp;
 <button class="btn btn-primary" on:click={endInitiative}>
   <i class="fa-solid fa-hand"></i>&nbsp;End
 </button><br/>
+<button class="btn btn-primary" on:click={toggle('healthVisible')}>
+  {#if state[state.currentCampaign] && state[state.currentCampaign].healthVisible}
+    <i class="fa-solid fa-eye-slash"></i>
+  {:else}
+    <i class="fa-solid fa-eye"></i>
+  {/if}&nbsp;Enemy Health
+</button>
+<button class="btn btn-primary" on:click={toggle('enemyHealthVisible')}>
+  {#if state[state.currentCampaign] && state[state.currentCampaign].enemyHealthVisible}
+    <i class="fa-solid fa-eye-slash"></i>
+  {:else}
+    <i class="fa-solid fa-eye"></i>
+  {/if}&nbsp;Player Health
+</button>
 <button class="btn btn-primary" on:click={initiateRest('long')}>
   <i class="fa-solid fa-bed"></i>&nbsp;Long Rest
 </button><br/>
 Dsiplay Size: <input type="range" min="1" max="5" step="0.1" bind:value={state.dislaySize} on:change={broadcastState} />&nbsp;{state.dislaySize}
 <div class="display">
-  <PlayerList players={state[state.currentCampaign] && state[state.currentCampaign].players} on:update={playersChange} sortable={sortable} initiative={false} healthVisible={true} />
+  <PlayerList
+    players={state[state.currentCampaign] && state[state.currentCampaign].players}
+    on:update={playersChange}
+    sortable={sortable}
+    initiative={false}
+    healthVisible={true}
+    enemyHealthVisible={true} />
 </div>
-<ImageList images={state[state.currentCampaign] && state[state.currentCampaign].images} on:update={imagesChange} />
+<ImageList
+  images={state[state.currentCampaign] && state[state.currentCampaign].images}
+  on:update={imagesChange} />
