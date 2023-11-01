@@ -116,7 +116,7 @@
       [state.currentCampaign]: {
         ...state[state.currentCampaign],
         players: state[state.currentCampaign].players.map((p, i) => {
-          if (i === state.currentPlayer) {
+          if (i === state[state.currentCampaign].currentPlayer) {
             p.active = true
           } else {
             p.active = false
@@ -127,29 +127,29 @@
     }
   }
   const startInitiative = (_e) => {
-    state.currentPlayer = 0
+    state[state.currentCampaign].currentPlayer = 0
     updatePlayerActive()
     broadcastState()
   }
   const nextPlayer = (_e) => {
-    state.currentPlayer += 1
-    if (state.currentPlayer >= state.players.length) {
-      state.currentPlayer = 0
+    state[state.currentCampaign].currentPlayer += 1
+    if (state[state.currentCampaign].currentPlayer >= state[state.currentCampaign].players.length) {
+      state[state.currentCampaign].currentPlayer = 0
     }
     updatePlayerActive()
     broadcastState()
     
   }
   const previousPlayer = (_e) => {
-    state.currentPlayer -= 1
-    if (state.currentPlayer <= 0) {
-      state.currentPlayer = state.players.length - 1
+    state[state.currentCampaign].currentPlayer -= 1
+    if (state[state.currentCampaign].currentPlayer < 0) {
+      state[state.currentCampaign].currentPlayer = state[state.currentCampaign].players.length - 1
     }
     updatePlayerActive()
     broadcastState()
   }
   const endInitiative = (_e) => {
-    state.currentPlayer = null
+    state[state.currentCampaign].currentPlayer = null
     updatePlayerActive()
     broadcastState()
   }
@@ -157,7 +157,10 @@
   const toggleVisibility = (_e) => {
     state = {
       ...state,
-      initiativeVisible: !state.initiativeVisible
+      [state.currentCampaign]: {
+        ...state[state.currentCampaign],
+        initiativeVisible: !state[state.currentCampaign].initiativeVisible
+      }
     }
     broadcastState()
   }
@@ -214,7 +217,7 @@ Campaign:&nbsp;
   {/if}
 </button>
 <button class="btn btn-primary" on:click={toggleVisibility}>
-  {#if state.initiativeVisible}
+  {#if state[state.currentCampaign] && state[state.currentCampaign].initiativeVisible}
     <i class="fa-solid fa-eye-slash"></i>&nbsp;Hide
   {:else}
     <i class="fa-solid fa-eye"></i>&nbsp;Show
