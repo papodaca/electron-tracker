@@ -2,16 +2,22 @@
   "build": {
     "appId": "im.iyg.electron.tracker",
     "mac": {
-      "target": ["zip", "dmg"],
-      "category": "apps.games"
+      "target": ["zip", "dmg"]
     },
     "win": {
       "target": ["zip", "nsis"],
       "icon": "public/assets/icons/favicon.ico"
     },
     "linux": {
-      "target": ["tar.gz", "deb", "AppImage", "flatpak"]
+      "target": ["tar.gz", "AppImage"],
+      "icon": "public/assets/icons/electron-tracker.png",
+      "category": "Utility"
     }
+  },
+  "author": {
+    "email": "papodaca@gmail.com",
+    "name": "Ethan Apodaca",
+    "url": "https://github.com/papodaca"
   },
   "name": "electron-tracker",
   "module": "index.mjs",
