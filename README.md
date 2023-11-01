@@ -1,4 +1,4 @@
-# Electron Tracker
+# ![App Icon](public/assets/icons/android-icon-72x72.png) Electron Tracker
 
 Track initiative for your campaigns on a secondary monitor.
 
@@ -13,6 +13,6 @@ Track initiative for your campaigns on a secondary monitor.
 asdf install
 ```
 3. Run development
-```
+```bash
 yarn start
 ```

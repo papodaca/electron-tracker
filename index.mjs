@@ -34,7 +34,11 @@ const createConsoleWindow = () => {
 }
 
 const createPresenterWindow = () => {
-  if (presenterWindow) return
+  if (presenterWindow){
+    presenterWindow.hide()
+    presenterWindow.show()
+    return
+  }
   presenterWindow = createWindow('presenter')
   presenterWindow.loadFile(path.resolve(app.getAppPath(), 'web/presenter.html'))
   presenterWindow.on('close', () => {

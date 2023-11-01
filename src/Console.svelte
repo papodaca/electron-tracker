@@ -10,6 +10,10 @@
   const loadState = async () => {
     state = await consoleAPI.getState()
     let changed = false
+    if (state.dislaySize == null) {
+      state.dislaySize = 1.0
+      changed = true
+    } 
     if (state.currentCampaign == null) {
       state.currentCampaign = "default"
       state.campaigns = [state.currentCampaign]
@@ -246,7 +250,8 @@ Campaign:&nbsp;
 </button>
 <button class="btn btn-primary" on:click={endInitiative}>
   <i class="fa-solid fa-hand"></i>&nbsp;End
-</button>
+</button><br/>
+Dsiplay Size: <input type="range" min="1" max="5" step="0.1" bind:value={state.dislaySize} on:change={broadcastState} />&nbsp;{state.dislaySize}
 <div class="display">
   <PlayerList players={state[state.currentCampaign] && state[state.currentCampaign].players} on:update={playersChange} sortable={sortable} initiative={false} />
 </div>
