@@ -16,6 +16,6 @@
 
 {#if state[state.currentCampaign] && state[state.currentCampaign].players && state[state.currentCampaign].initiativeVisible}
   <div style="font-size: {state.dislaySize.toString()}em">
-    <PlayerList players={state[state.currentCampaign].players} initiative={true} />
+    <PlayerList players={state[state.currentCampaign].players} initiative={true} healthVisible={state[state.currentCampaign].healthVisible} />
   </div>
 {/if}

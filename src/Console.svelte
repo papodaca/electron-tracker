@@ -4,6 +4,8 @@
   import { toTitleCase } from "./utils"
   import ImageList from "./components/ImageList.svelte";
 
+  const DEFAULT_HEALTH = 10
+
   const openPresenter = consoleAPI.openPresenter
   let state = {}, sortable = false, newCampaignName
 
@@ -23,6 +25,16 @@
       state[state.currentCampaign] = defaultCampaing()
       changed = true
     }
+    // retrofit old campaings that lack health info
+    state.campaigns.forEach((campaign) => {
+      state[campaign].players.forEach((player) => {
+        if(player.health == null) {
+          player.health = DEFAULT_HEALTH
+          player.maxHealth = DEFAULT_HEALTH
+          changed = true
+        }
+      })
+    })
     console.log("images", state[state.currentCampaign].images)
     if (changed) broadcastState()
   }
@@ -31,14 +43,20 @@
       {
         id: crypto.randomUUID(),
         name: "Player 1",
+        health: DEFAULT_HEALTH,
+        maxHealth: DEFAULT_HEALTH,
         initiative: 3
       },{
         id: crypto.randomUUID(),
         name: "Player 2",
+        health: DEFAULT_HEALTH,
+        maxHealth: DEFAULT_HEALTH,
         initiative: 2
       },{
         id: crypto.randomUUID(),
         name: "Player 3",
+        health: DEFAULT_HEALTH,
+        maxHealth: DEFAULT_HEALTH,
         initiative: 1
       }
     ],
@@ -60,13 +78,13 @@
         players: e.detail 
       }
     }
-    sortList(null)
+    sortList()
     broadcastState()
   }
   const toggleSortable = (_e) => {
     sortable = !sortable
   }
-  const sortList = (_e) => {
+  const sortList = () => {
     state = {
       ...state,
       [state.currentCampaign]: {
@@ -98,6 +116,8 @@
             id: crypto.randomUUID(),
             name: `New ${toTitleCase(kind)}`,
             initiative: 0,
+            health: DEFAULT_HEALTH,
+            maxHealth: DEFAULT_HEALTH,
             kind
           }
         ]
@@ -168,6 +188,16 @@
     }
     broadcastState()
   }
+  const toggleHealthVisibility = (_e) => {
+    state = {
+      ...state,
+      [state.currentCampaign]: {
+        ...state[state.currentCampaign],
+        healthVisible: !state[state.currentCampaign].healthVisible
+      }
+    }
+    broadcastState()
+  }
   const broadcastState = () => consoleAPI.broadcastState(state)
   const imagesChange = (e) => {
     state = {
@@ -179,6 +209,21 @@
     }
     broadcastState()
   }
+  const initiateRest = (kind) => (() => {
+    if (kind === 'long') {
+      state = {
+      ...state,
+      [state.currentCampaign]: {
+        ...state[state.currentCampaign],
+        players: state[state.currentCampaign].players.map(p => {
+          if (p.kind === 'player' || p.kind === 'npc') p.health = p.maxHealth
+          return p
+        })
+      }
+    }
+    broadcastState()
+    }
+  })
 </script>
 <style>
   .display {
@@ -239,6 +284,13 @@ Campaign:&nbsp;
 <button class="btn btn-danger" on:click={clearMonsters}>
   <i class="fa-solid fa-square-xmark"></i>&nbsp;Clear Monsters
 </button><br/>
+<button class="btn btn-primary" on:click={toggleHealthVisibility}>
+  {#if state[state.currentCampaign] && state[state.currentCampaign].healthVisible}
+    <i class="fa-solid fa-eye-slash"></i>
+  {:else}
+    <i class="fa-solid fa-eye"></i>
+  {/if}&nbsp;Health
+</button>
 <button class="btn btn-primary" on:click={startInitiative}>
   <i class="fa-solid fa-play"></i>&nbsp;Start
 </button>
@@ -251,8 +303,11 @@ Campaign:&nbsp;
 <button class="btn btn-primary" on:click={endInitiative}>
   <i class="fa-solid fa-hand"></i>&nbsp;End
 </button><br/>
+<button class="btn btn-primary" on:click={initiateRest('long')}>
+  <i class="fa-solid fa-bed"></i>&nbsp;Long Rest
+</button><br/>
 Dsiplay Size: <input type="range" min="1" max="5" step="0.1" bind:value={state.dislaySize} on:change={broadcastState} />&nbsp;{state.dislaySize}
 <div class="display">
-  <PlayerList players={state[state.currentCampaign] && state[state.currentCampaign].players} on:update={playersChange} sortable={sortable} initiative={false} />
+  <PlayerList players={state[state.currentCampaign] && state[state.currentCampaign].players} on:update={playersChange} sortable={sortable} initiative={false} healthVisible={true} />
 </div>
 <ImageList images={state[state.currentCampaign] && state[state.currentCampaign].images} on:update={imagesChange} />

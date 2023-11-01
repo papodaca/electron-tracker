@@ -72,7 +72,7 @@
 
   // PROPS
   export let players = []
-  export let initiative = true, sortable = false
+  export let initiative = true, sortable = false, healthVisible = false
 </script>
 
 <style>
@@ -134,6 +134,13 @@
           <i class="fa-solid fa-grip-vertical"></i>&nbsp;
         {/if}
         <span class="initiative"><InPlaceEdit bind:value={player.initiative} on:submit={updateField(player.id, 'initiative')} editable={!initiative && !sortable} /></span>
+        {#if healthVisible }
+        <span class="health">
+          HP:&nbsp;<InPlaceEdit bind:value={player.health} on:submit={updateField(player.id, 'health')} editable={!initiative && !sortable} />
+          &nbsp;/&nbsp;
+          <InPlaceEdit bind:value={player.maxHealth} on:submit={updateField(player.id, 'maxHealth')} editable={!initiative && !sortable} />
+        </span>
+        {/if}
         &nbsp;-&nbsp;
         {#if player.kind === 'player'}
           <i class="fa-solid fa-person-hiking"></i>
