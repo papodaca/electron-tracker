@@ -254,6 +254,13 @@ Campaign:&nbsp;
 <button class="btn btn-primary" on:click={endInitiative}>
   <i class="fa-solid fa-hand"></i>&nbsp;End
 </button><br/>
+<button class="btn btn-primary" on:click={toggle('initiativeVisible')}>
+  {#if state[state.currentCampaign] && state[state.currentCampaign].initiativeVisible}
+    <i class="fa-solid fa-eye-slash"></i>
+  {:else}
+    <i class="fa-solid fa-eye"></i>
+  {/if}&nbsp;Initiative
+</button>
 <button class="btn btn-primary" on:click={toggle('healthVisible')}>
   {#if state[state.currentCampaign] && state[state.currentCampaign].healthVisible}
     <i class="fa-solid fa-eye-slash"></i>
