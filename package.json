@@ -1,8 +1,11 @@
 {
   "build": {
     "appId": "im.iyg.electron.tracker",
+    "productName": "Electron Tracker",
     "mac": {
-      "target": ["zip", "dmg"]
+      "target": ["zip", "dmg"],
+      "icon": "public/assets/icons/electron-tracker.png",
+      "category": "public.app-category.utilities"
     },
     "win": {
       "target": ["zip", "nsis"],
@@ -23,8 +26,7 @@
   "module": "index.mjs",
   "main": "index.cjs",
   "type": "module",
-  "private": true,
-  "version": "1.1.0",
+  "version": "1.1.1",
   "license": "MIT",
   "scripts": {
     "start": "nf start",
