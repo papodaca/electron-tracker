@@ -15,7 +15,7 @@
     if (state.dislaySize == null) {
       state.dislaySize = 1.0
       changed = true
-    } 
+    }
     if (state.currentCampaign == null) {
       state.currentCampaign = "default"
       state.campaigns = [state.currentCampaign]
@@ -68,7 +68,7 @@
   }
   const playersChange = (e) => {
     updateCampaign({
-      players: e.detail 
+      players: e.detail
     }, false)
     sortList()
     broadcastState()
@@ -78,15 +78,16 @@
   }
   const sortList = () => {
     updateCampaign({
-      players: state[state.currentCampaign].players.sort((a, b) => Number(b.initiative) - Number(a.initiative)) 
+      players: state[state.currentCampaign].players.sort((a, b) => Number(b.initiative) - Number(a.initiative))
     })
   }
 
   const addCampaign = (_el) => {
-    updateCampaign({
+    state = {
+      ...state,
       campaigns: [...state.campaigns, newCampaignName],
       [newCampaignName]: defaultCampaing()
-    })
+    }
     newCampaignName = undefined
   }
   const addPlayer = (kind) =>((_e) => {
@@ -133,7 +134,7 @@
     }
     updatePlayerActive()
     broadcastState()
-    
+
   }
   const previousPlayer = (_e) => {
     state[state.currentCampaign].currentPlayer -= 1
