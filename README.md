@@ -1,5 +1,7 @@
 # ![App Icon](public/assets/icons/android-icon-72x72.png) Electron Tracker
 
+### [Superseded by the tauri port](https://github.com/papodaca/initiative-tracker)
+
 Track initiative for your campaigns on a secondary monitor.
 
 * Track initiative of players, monsters and NPCs
